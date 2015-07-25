@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.text.DateFormat;
 import java.util.Date;
+import android.text.format.Time;
 
 
 public class MyActivity extends ActionBarActivity implements
@@ -42,6 +43,7 @@ public class MyActivity extends ActionBarActivity implements
 
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
+    protected TextView infoText;
     /**
      * Stores parameters for requests to the FusedLocationProviderApi.
      */
@@ -67,6 +69,7 @@ public class MyActivity extends ActionBarActivity implements
 
         mLatitudeText = (TextView) findViewById(R.id.mLatitudeText);
         mLongitudeText = (TextView) findViewById(R.id.mLongitudeText);
+        infoText = (TextView) findViewById(R.id.infoText);
         buildGoogleApiClient();
         updateValuesFromBundle(savedInstanceState);
     }
@@ -190,6 +193,9 @@ public class MyActivity extends ActionBarActivity implements
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        Time now = new Time();
+        now.setToNow();
+        infoText.setText("On Location Changed " + now);
         updateUI();
     }
 

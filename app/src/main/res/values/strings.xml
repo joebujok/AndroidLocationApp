@@ -10,5 +10,5 @@
     <string name="action_search">Search</string>
     <string name="mLatitudeTextHint">Latitude will appear here</string>
     <string name="mLongitudeTextHint">Longitude will appear here</string>
-
+    <string name="infoTextHint">Some text should change here...</string>
 </resources>
