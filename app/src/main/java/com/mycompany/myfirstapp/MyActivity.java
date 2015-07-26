@@ -20,6 +20,8 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -27,10 +29,10 @@ import android.text.format.Time;
 
 
 public class MyActivity extends ActionBarActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+        ConnectionCallbacks, OnConnectionFailedListener, LocationListener, OnMapReadyCallback {
 
     public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
-    private static final String TAG = "basic-location-sample";
+    private static final String TAG = "loc-app-jb";
     public boolean mRequestingLocationUpdates = true;
     /**
      * Provides the entry point to Google Play services.
@@ -129,7 +131,7 @@ public class MyActivity extends ActionBarActivity implements
             updateUI();
         }
         if(mRequestingLocationUpdates){
-        //   startLocationUpdates();
+           startLocationUpdates();
         }
     }
 
@@ -177,7 +179,7 @@ public class MyActivity extends ActionBarActivity implements
     }
 
     protected void createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -192,17 +194,20 @@ public class MyActivity extends ActionBarActivity implements
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
+
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        Time now = new Time();
-        now.setToNow();
-        infoText.setText("On Location Changed " + now);
+
+        infoText.setText("On Location Changed " + mLastUpdateTime);
         updateUI();
     }
 
 
     private void updateUI() {
-        mLatitudeText.setText(String.valueOf(mCurrentLocation.getLatitude()));
-        mLongitudeText.setText(String.valueOf(mCurrentLocation.getLongitude()));
+        if (mCurrentLocation!=null){
+            mLatitudeText.setText(String.valueOf(mCurrentLocation.getLatitude()));
+            mLongitudeText.setText(String.valueOf(mCurrentLocation.getLongitude()));
+        }
+
        // mLastUpdateTimeTextView.setText(mLastUpdateTime);
     }
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -243,4 +248,8 @@ public class MyActivity extends ActionBarActivity implements
     }
 
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
 }
