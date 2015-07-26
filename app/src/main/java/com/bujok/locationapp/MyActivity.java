@@ -1,4 +1,4 @@
-package com.mycompany.myfirstapp;
+package com.bujok.locationapp;
 
 import android.content.Intent;
 import com.google.android.gms.location.LocationListener;
@@ -21,11 +21,14 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DateFormat;
 import java.util.Date;
-import android.text.format.Time;
 
 
 public class MyActivity extends ActionBarActivity implements
@@ -46,6 +49,7 @@ public class MyActivity extends ActionBarActivity implements
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
     protected TextView infoText;
+    protected GoogleMap map;
     /**
      * Stores parameters for requests to the FusedLocationProviderApi.
      */
@@ -64,6 +68,8 @@ public class MyActivity extends ActionBarActivity implements
     protected final static String LOCATION_KEY = "location-key";
     protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +80,9 @@ public class MyActivity extends ActionBarActivity implements
         infoText = (TextView) findViewById(R.id.infoText);
         buildGoogleApiClient();
         updateValuesFromBundle(savedInstanceState);
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
+        mapFragment.getMapAsync(this);
+
     }
 
 
@@ -120,7 +129,7 @@ public class MyActivity extends ActionBarActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Connected to GoogleApiClient");
-//        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 //        if (mLastLocation != null) {
 //            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
 //            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
@@ -197,7 +206,11 @@ public class MyActivity extends ActionBarActivity implements
 
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
-        infoText.setText("On Location Changed " + mLastUpdateTime);
+        infoText.setText("Location last updated : " + mLastUpdateTime);
+
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title("Current Location"));
         updateUI();
     }
 
@@ -249,7 +262,10 @@ public class MyActivity extends ActionBarActivity implements
 
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap returnedMap) {
+        returnedMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        map = returnedMap;
+
 
     }
 }
