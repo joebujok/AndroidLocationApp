@@ -23,11 +23,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -68,6 +70,7 @@ public class MyActivity extends ActionBarActivity implements
     protected final static String LOCATION_KEY = "location-key";
     protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
 
+    protected ArrayList<Marker> mMarkerArray = new ArrayList<Marker>();
 
 
     @Override
@@ -208,9 +211,16 @@ public class MyActivity extends ActionBarActivity implements
 
         infoText.setText("Location last updated : " + mLastUpdateTime);
 
-        map.addMarker(new MarkerOptions()
+        Marker marker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title("Current Location"));
+                .title("Location at " + DateFormat.getTimeInstance().format(new Date()))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        mMarkerArray.add(marker);
+        if (mMarkerArray.size()>1) {
+            Marker previousMarker = mMarkerArray.get(mMarkerArray.size() - 2);
+            previousMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+        }
+
         updateUI();
     }
 
@@ -264,6 +274,7 @@ public class MyActivity extends ActionBarActivity implements
     @Override
     public void onMapReady(GoogleMap returnedMap) {
         returnedMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
         map = returnedMap;
 
 
