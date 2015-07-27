@@ -76,6 +76,7 @@ public class MyActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new GcmRegistrationAsyncTask(this).execute();
         setContentView(R.layout.activity_my);
 
         mLatitudeText = (TextView) findViewById(R.id.mLatitudeText);
