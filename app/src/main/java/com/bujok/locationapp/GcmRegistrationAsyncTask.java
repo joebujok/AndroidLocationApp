@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.bujok.locationapp.backend.registration.Registration;
+import com.bujok.locationapp.helper.Constants;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -47,7 +48,7 @@ class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
                     });*/
             // end of optional local run code
             Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("https://innate-trees-101921.appspot.com/_ah/api/");
+                    .setRootUrl(Constants.BACKEND_URL);
             regService = builder.build();
         }
 
