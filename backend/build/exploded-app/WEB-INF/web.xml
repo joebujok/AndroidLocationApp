@@ -15,7 +15,8 @@
             <param-name>services</param-name>
             <param-value>com.bujok.locationapp.backend.RegistrationEndpoint,
                 com.bujok.locationapp.backend.MessagingEndpoint,
-                com.bujok.locationapp.backend.OfferEndpoint</param-value>
+                com.bujok.locationapp.backend.OfferEndpoint,
+                com.bujok.locationapp.backend.LocationHistoryEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

@@ -1,6 +1,8 @@
 package com.bujok.locationapp;
 
 import android.content.Intent;
+
+import com.bujok.locationapp.async.sendLocationAsyncTask;
 import com.google.android.gms.location.LocationListener;
 
 import android.location.Location;
@@ -119,6 +121,17 @@ public class MyActivity extends ActionBarActivity implements
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
+    }
+    public void sendLocation(View view){
+        if(mCurrentLocation!=null){
+          new sendLocationAsyncTask().execute(mCurrentLocation);
+
+        }
+
+    }
+    public void receiveLocation(View view){
+
+
     }
     protected synchronized void buildGoogleApiClient() {
         Log.i(TAG, "Building GoogleApiClient");
@@ -241,6 +254,7 @@ public class MyActivity extends ActionBarActivity implements
         savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
         super.onSaveInstanceState(savedInstanceState);
     }
+
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         Log.i(TAG, "Updating values from bundle");

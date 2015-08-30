@@ -62,6 +62,26 @@ android:orientation="vertical" >
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
+        <Button android:id="@+id/SendLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/button_SendLocation"
+            android:onClick="sendLocation"/>
+
+        <Button
+            android:id="@+id/ReceiveLocationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_ReceiveLocation"
+            android:onClick="receiveLocation"/>
+
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:name="com.google.android.gms.maps.MapFragment"
             android:id="@+id/mapFragment"
@@ -71,4 +91,5 @@ android:orientation="vertical" >
 
 
     </LinearLayout>
+
 </LinearLayout>

@@ -11,4 +11,6 @@
     <string name="mLatitudeTextHint">Latitude will appear here</string>
     <string name="mLongitudeTextHint">Longitude will appear here</string>
     <string name="infoTextHint">Some text should change here...</string>
+    <string name="button_SendLocation">Send Location</string>
+    <string name="button_ReceiveLocation">Receive Location</string>
 </resources>
