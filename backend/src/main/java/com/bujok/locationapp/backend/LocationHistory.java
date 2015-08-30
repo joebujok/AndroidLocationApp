@@ -97,7 +97,7 @@ public class LocationHistory {
      * Sets the locationHistory timestamp.
      * @param pTimeStamp The timestamp to set for this locationHistory.
      */
-    public final void setGeoPt(final long pTimeStamp) {
+    public final void setTimeStamp(final long pTimeStamp) {
         this.timeStamp = pTimeStamp;
     }
 }

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Z0BdiyYwNwGkcMV4v20u2gKV3Cs\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/EkOYBUpjMQ-XJcd8T9uMYH355d4\"",
  "discoveryVersion": "v1",
  "id": "locationHistoryApi:v1",
  "name": "locationHistoryApi",
@@ -116,6 +116,10 @@
      "$ref": "GeoPt"
     },
     "locationHistoryID": {
+     "type": "string",
+     "format": "int64"
+    },
+    "timeStamp": {
      "type": "string",
      "format": "int64"
     }

@@ -49,6 +49,7 @@ public class sendLocationAsyncTask extends AsyncTask<Location, Void, Void> {
             coords.setLatitude((float) params[0].getLatitude());
             coords.setLongitude((float) params[0].getLongitude());
             locToInsert.setGeoPt(coords);
+            locToInsert.setTimeStamp(params[0].getTime());
             myApiService.insert(locToInsert).execute();
             Log.i(TAG, "Location Successfully inserted");
 
