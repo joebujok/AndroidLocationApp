@@ -3,6 +3,7 @@ package com.bujok.locationapp;
 import android.content.Intent;
 
 import com.bujok.locationapp.async.sendLocationAsyncTask;
+import com.bujok.locationapp.services.LocationService;
 import com.google.android.gms.location.LocationListener;
 
 import android.location.Location;
@@ -88,6 +89,8 @@ public class MyActivity extends ActionBarActivity implements
         updateValuesFromBundle(savedInstanceState);
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
+        Intent intent = new Intent(this, LocationService.class);
+        startService(intent);
 
     }
 
@@ -130,7 +133,8 @@ public class MyActivity extends ActionBarActivity implements
 
     }
     public void receiveLocation(View view){
-
+        Intent intent = new Intent(this, LocationService.class);
+        stopService(intent);
 
     }
     protected synchronized void buildGoogleApiClient() {
