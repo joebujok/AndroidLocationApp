@@ -1,9 +1,14 @@
 package com.bujok.locationapp;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 
 import com.bujok.locationapp.async.sendLocationAsyncTask;
 import com.bujok.locationapp.services.LocationService;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.location.LocationListener;
 
 import android.location.Location;
@@ -37,7 +42,7 @@ import java.util.Date;
 
 
 public class MyActivity extends ActionBarActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener, LocationListener, OnMapReadyCallback {
+        ConnectionCallbacks, OnConnectionFailedListener, LocationListener, OnMapReadyCallback, ResultCallback<Status> {
 
     public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
     private static final String TAG = "loc-app-jb";
@@ -64,6 +69,7 @@ public class MyActivity extends ActionBarActivity implements
      */
     protected Location mCurrentLocation;
 
+    PendingIntent mRequestLocationUpdatesPendingIntent;
     /**
      * Time when the location was updated represented as a String.
      */
@@ -133,8 +139,9 @@ public class MyActivity extends ActionBarActivity implements
 
     }
     public void receiveLocation(View view){
-        Intent intent = new Intent(this, LocationService.class);
-        stopService(intent);
+        //Intent intent = new Intent(this, LocationService.class);
+        //stopService(intent);
+        stopLocationUpdates();
 
     }
     protected synchronized void buildGoogleApiClient() {
@@ -143,13 +150,13 @@ public class MyActivity extends ActionBarActivity implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-                .build();
+        .build();
         createLocationRequest();
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Connected to GoogleApiClient");
+    public void onConnected(Bundle bundle){
+        Log.i(TAG,"Connected to GoogleApiClient");
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 //        if (mLastLocation != null) {
 //            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
@@ -171,7 +178,7 @@ public class MyActivity extends ActionBarActivity implements
         mGoogleApiClient.connect();
     }
     @Override
-    protected void onStop() {
+    protected void onStop(){
         super.onStop();
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
@@ -191,9 +198,14 @@ public class MyActivity extends ActionBarActivity implements
         }
     }
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
+
+        //LocationServices.FusedLocationApi.removeLocationUpdates(
+        //        mGoogleApiClient, this);
+        Log.i(TAG,"Attempting to stop location updates...");
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,
+                mRequestLocationUpdatesPendingIntent).setResultCallback(this);
     }
+
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
@@ -216,8 +228,17 @@ public class MyActivity extends ActionBarActivity implements
     }
 
     protected void startLocationUpdates() {
+
+        // create the Intent to use WebViewActivity to handle results
+        Intent mRequestLocationUpdatesIntent = new Intent(this, LocationService.class);
+
+        // create a PendingIntent
+        mRequestLocationUpdatesPendingIntent = PendingIntent.getService(getApplicationContext(),0,
+                mRequestLocationUpdatesIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
         LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
+                mGoogleApiClient, mLocationRequest, mRequestLocationUpdatesPendingIntent);
     }
 
 
@@ -297,5 +318,12 @@ public class MyActivity extends ActionBarActivity implements
         map = returnedMap;
 
 
+    }
+
+    @Override
+    public void onResult(Status status) {
+        if (status.isSuccess()) {
+            Log.i(TAG,"LocationService Successfully stopped.");
+        }
     }
 }

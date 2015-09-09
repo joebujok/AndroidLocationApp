@@ -1,111 +1,86 @@
 package com.bujok.locationapp.services;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.nfc.Tag;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.bujok.locationapp.serializable.BasicLocationInfo;
+import com.google.android.gms.location.FusedLocationProviderApi;
 
-/**
- * Created by Buje on 01/09/2015.
- */
-public class LocationService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-    private static final String TAG = "loc-app-LocService";
-    private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 1000;
-    private static final float LOCATION_DISTANCE = 10f;
+public class LocationService extends IntentService {
 
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
+    private final String TAG = "loc-app-LocService";
+    private String FILENAME = "locationData";
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        createLocationRequest();
-    }
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    Location location;
+
+    public LocationService() {
+
+        super("LocationUpdateService");
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        Log.i(TAG,"Location API onConnected");
-        startLocationUpdates();
+    protected void onHandleIntent(Intent intent) {
+
+        if (intent.hasExtra(FusedLocationProviderApi.KEY_LOCATION_CHANGED)) {
+
+            location = intent.getParcelableExtra(FusedLocationProviderApi.KEY_LOCATION_CHANGED);
+
+            Log.d(TAG, "time: " + location.getTime() + "accuracy: " + location.getAccuracy() + " lat: " + location.getLatitude() + " lon: " + location.getLongitude());
+
+            BasicLocationInfo LocData = new BasicLocationInfo();
+            LocData.setAccuracy(location.getAccuracy());
+            LocData.setLatitude(location.getLatitude());
+            LocData.setLongitude(location.getTime());
+            LocData.setTime(location.getTime());
+            // get existing object if it exists
+            List<BasicLocationInfo> LocDataList = new ArrayList<>();
+
+            try{
+                FileInputStream fis = openFileInput(FILENAME);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                //Todo fix this issue, the stored data is not in a list format so the cast doesnt work. i think....
+
+                LocDataList = (List<BasicLocationInfo>) ois.readObject();
+                ois.close();
+                fis.close();
+            }
+            catch (IOException e){
+                Log.e(TAG, e.getMessage());
+            }
+            catch (ClassNotFoundException e){
+                Log.e(TAG, e.getMessage());
+            }
+            LocDataList.add(LocData);
+
+            try {
+                FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(LocDataList);
+                oos.close();
+                fos.close();
+                Log.i(TAG,"Object successfully serialised to disk.");
+            }
+            catch (IOException e){
+                Log.e(TAG, e.getMessage());
+            }
+            finally {
+                // TODO: JOE BUJOK - Figure out the best practice to close the streams so they get closed if there is an error.
+               // oos.close();
+               // fos.close();
+            }
+
+        }
     }
-
-    protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
-    }
-
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.i(TAG,"On location changed received from fused location API via my service");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
-        Log.e(TAG, "onStartCommand");
-        super.onStartCommand(intent, flags, startId);
-        buildGoogleApiClient();
-        return START_STICKY;
-    }
-    @Override
-    public void onCreate() {
-        Log.e(TAG, "onCreate");
-
-
-    }
-    @Override
-    public void onDestroy() {
-        Log.e(TAG, "onDestroy");
-        stopLocationUpdates();
-        super.onDestroy();
-
-    }
-
-
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
 }
