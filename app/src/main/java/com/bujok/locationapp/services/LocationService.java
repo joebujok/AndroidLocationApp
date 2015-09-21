@@ -4,12 +4,12 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.nfc.Tag;
 import android.util.Log;
 
 import com.bujok.locationapp.serializable.BasicLocationInfo;
 import com.google.android.gms.location.FusedLocationProviderApi;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class LocationService extends IntentService {
             BasicLocationInfo LocData = new BasicLocationInfo();
             LocData.setAccuracy(location.getAccuracy());
             LocData.setLatitude(location.getLatitude());
-            LocData.setLongitude(location.getTime());
+            LocData.setLongitude(location.getLongitude());
             LocData.setTime(location.getTime());
             // get existing object if it exists
             List<BasicLocationInfo> LocDataList = new ArrayList<>();
@@ -70,7 +70,9 @@ public class LocationService extends IntentService {
                 oos.writeObject(LocDataList);
                 oos.close();
                 fos.close();
-                Log.i(TAG,"Object successfully serialised to disk.");
+                File dir = getFilesDir();
+                File file = new File(dir,FILENAME);
+                Log.i(TAG,"Object successfully serialised to disk. File size = " + file.length() + " bytes");
             }
             catch (IOException e){
                 Log.e(TAG, e.getMessage());

@@ -69,11 +69,18 @@ android:orientation="vertical" >
             android:onClick="sendLocation"/>
 
         <Button
-            android:id="@+id/ReceiveLocationButton"
+        android:id="@+id/ReceiveLocationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_ReceiveLocation"
+        android:onClick="receiveLocation"/>
+
+        <Button
+            android:id="@+id/DeleteLocationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_ReceiveLocation"
-            android:onClick="receiveLocation"/>
+            android:text="@string/button_DeleteLocation"
+            android:onClick="deleteLocation"/>
 
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 
 import com.bujok.locationapp.async.sendLocationAsyncTask;
+import com.bujok.locationapp.serializable.BasicLocationInfo;
 import com.bujok.locationapp.services.LocationService;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,9 +38,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class MyActivity extends ActionBarActivity implements
@@ -142,6 +148,16 @@ public class MyActivity extends ActionBarActivity implements
         //Intent intent = new Intent(this, LocationService.class);
         //stopService(intent);
         stopLocationUpdates();
+
+    }
+    public void deleteLocation(View view){
+        File dir = getFilesDir();
+        File file = new File(dir,"locationData");
+        boolean delete = file.delete();
+        if(delete){
+            Toast.makeText(getApplicationContext(), "Local location data successfully deleted", Toast.LENGTH_LONG).show();
+
+        }
 
     }
     protected synchronized void buildGoogleApiClient() {
